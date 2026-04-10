@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The History of Jakarta</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:#f4f6f9;color:#1a2233;padding:2rem 1rem 4rem}
+.ph{text-align:center;max-width:740px;margin:0 auto 2rem;padding-bottom:1.35rem;border-bottom:2px solid #dde2ea}
+.ph h1{font-size:1.7rem;font-family:Georgia,serif;color:#003366;margin-bottom:0.32rem}
+.ph p{font-size:0.87rem;color:#6b7280}
+.vg{max-width:740px;margin:0 auto;display:grid;gap:1.8rem}
+.vc{background:#fff;border-radius:12px;border:1px solid #dde2ea;padding:1.15rem;box-shadow:0 2px 10px rgba(10,40,80,.07)}
+.vn{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0a8a8a;margin-bottom:.28rem}
+.vt{font-size:1.05rem;font-family:Georgia,serif;color:#1a2233;margin-bottom:.17rem;line-height:1.35}
+.vch{font-size:.77rem;color:#6b7280;margin-bottom:.55rem}
+.vd{font-size:.84rem;color:#374151;line-height:1.55;margin-bottom:.72rem}
+.vw{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;background:#000}
+.vw iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.ft{text-align:center;margin-top:2.5rem;font-size:.7rem;color:#9ca3af}
+@media(max-width:600px){.ph h1{font-size:1.3rem}}
+</style>
+</head>
+<body>
+<div class="ph">
+  <h1>The History of Jakarta</h1>
+  <p>3 videos · The history of Jakarta</p>
+</div>
+<div class="vg">
+
+    <div class="vc">
+      <p class="vn">Video 1</p>
+      <h2 class="vt">History of Jakarta Indonesia</h2>
+      <p class="vch">How? Why? Top!</p>
+      <div class="vw">
+        <iframe src="https://www.youtube.com/embed/vT8cgDYV1dE" title="History of Jakarta Indonesia"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div style="margin-top: 0.9rem; padding: 0.8rem 1rem; background: #f3f0ff; border-left: 4px solid #6b4fa0; border-radius: 0 6px 6px 0;">
+        <p style="margin: 0 0 0.42rem; font-size: 0.72rem; font-weight: bold; color: #4a2a8a; text-transform: uppercase; letter-spacing: 0.05em;">Discussion Questions</p>
+        <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: #2a1a4a; line-height: 1.6;"><li style="margin-bottom:0.35rem;">What is the single most important idea about History of Jakarta Indonesia from this video? Explain why you chose it.</li><li style="margin-bottom:0.35rem;">In 2–3 sentences, summarize the video's main argument as if you were explaining it to someone who has never studied The history of Jakarta.</li><li style="margin-bottom:0.35rem;">Choose one specific detail, example, or visual from the video and explain what it helped you understand about The history of Jakarta.</li></ol>
+      </div>
+    </div>
+
+    <div class="vc">
+      <p class="vn">Video 2</p>
+      <h2 class="vt">Jakarta’s Fascinating History in 60 Seconds!</h2>
+      <p class="vch">History &amp; Horizons</p>
+      <div class="vw">
+        <iframe src="https://www.youtube.com/embed/jnT4GXRhQIc" title="Jakarta’s Fascinating History in 60 Seconds!"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div style="margin-top: 0.9rem; padding: 0.8rem 1rem; background: #f3f0ff; border-left: 4px solid #6b4fa0; border-radius: 0 6px 6px 0;">
+        <p style="margin: 0 0 0.42rem; font-size: 0.72rem; font-weight: bold; color: #4a2a8a; text-transform: uppercase; letter-spacing: 0.05em;">Discussion Questions</p>
+        <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: #2a1a4a; line-height: 1.6;"><li style="margin-bottom:0.35rem;">The video makes a case about Jakarta’s Fascinating History in 60 Seconds!. Do you find that case convincing? What would make it stronger or weaker?</li><li style="margin-bottom:0.35rem;">If you had to push back on one claim in this video, what would it be and why?</li><li style="margin-bottom:0.35rem;">What is one thing the video did well in explaining Jakarta’s Fascinating History in 60 Seconds!, and one thing it could have done better?</li></ol>
+      </div>
+    </div>
+
+    <div class="vc">
+      <p class="vn">Video 3</p>
+      <h2 class="vt">History of Jakarta City: Evolution From Batavia to Megacity 🌆</h2>
+      <p class="vch">Evolution Timeline</p>
+      <div class="vw">
+        <iframe src="https://www.youtube.com/embed/nKH_AkbHrLE" title="History of Jakarta City: Evolution From Batavia to Megacity 🌆"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div style="margin-top: 0.9rem; padding: 0.8rem 1rem; background: #f3f0ff; border-left: 4px solid #6b4fa0; border-radius: 0 6px 6px 0;">
+        <p style="margin: 0 0 0.42rem; font-size: 0.72rem; font-weight: bold; color: #4a2a8a; text-transform: uppercase; letter-spacing: 0.05em;">Discussion Questions</p>
+        <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: #2a1a4a; line-height: 1.6;"><li style="margin-bottom:0.35rem;">What was one moment in this video that challenged something you already believed or assumed about The history of Jakarta?</li><li style="margin-bottom:0.35rem;">How does the video's explanation of History of Jakarta City: Evolution From Batavia… compare to what you expected going in? What surprised you?</li><li style="margin-bottom:0.35rem;">What claim or statistic in this video did you find hardest to believe? What would convince you it's accurate?</li></ol>
+      </div>
+    </div>
+</div>
+<div class="ft">Created with Video Resource Builder</div>
+</body>
+</html>
