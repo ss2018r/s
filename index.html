@@ -8,17 +8,33 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <style>
         /* === CSS Variables for Futuristic Theme === */
         :root {
-            --space-bg: #0b0f19;
-            --glass-bg: rgba(25, 30, 50, 0.4);
+            --space-bg: #020617;
+            --space-light: #0f172a;
+            --glass-bg: rgba(15, 23, 42, 0.6);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --neon-teal: #00f0ff;
-            --text-main: #e2e8f0;
+            --neon-teal: #00f2ff;
+            --neon-teal-dim: rgba(0, 242, 255, 0.2);
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+        }
+
+        .high-contrast {
+            --space-bg: #000000;
+            --space-light: #000000;
+            --glass-bg: #000000;
+            --glass-border: #ffffff;
+            --text-muted: #ffffff;
         }
 
         /* === Base Reset & Accessibility === */
@@ -26,12 +42,13 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at center, #1a2035 0%, var(--space-bg) 100%);
+            background: radial-gradient(circle at center, var(--space-light) 0%, var(--space-bg) 100%);
             color: var(--text-main);
-            overflow: hidden; /* Prevents scrollbars from 3D canvas */
+            overflow: hidden; 
             height: 100vh;
             display: flex;
             flex-direction: column;
+            user-select: none;
         }
 
         /* Skip to main content link for screen readers */
@@ -42,86 +59,712 @@
             background: var(--neon-teal);
             color: #000;
             padding: 8px;
-            z-index: 100;
+            z-index: 1000;
             transition: top 0.2s;
+            font-weight: bold;
         }
         .skip-link:focus { top: 0; }
 
         /* === Typography === */
-        h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+        h1, h2, h3, .space-font { font-family: 'Space Grotesk', sans-serif; }
         
         /* === UI Layout === */
         header {
-            position: relative;
+            position: absolute;
+            top: 0; left: 0; width: 100%;
             z-index: 10;
-            padding: 1.5rem 3rem;
+            padding: 2rem 3rem;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--glass-border);
-            background: rgba(11, 15, 25, 0.5);
-            backdrop-filter: blur(10px);
+            align-items: flex-start;
+            pointer-events: none;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--text-main);
-            text-transform: uppercase;
-        }
-
-        .logo span { color: var(--neon-teal); }
-
-        /* Navigation Bar controls */
-        .a11y-controls button {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .a11y-controls button:hover {
-            border-color: var(--neon-teal);
-            color: var(--neon-teal);
-        }
-
-        /* Main Container for 3D and UI */
-        main {
+        .logo-container {
+            pointer-events: auto;
             display: flex;
-            flex: 1;
-            position: relative;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px; height: 48px;
+            background: var(--neon-teal);
+            border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 20px var(--neon-teal-dim);
+            color: #000;
+            font-weight: 900;
+            font-size: 24px;
+            font-family: 'Space Grotesk';
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            font-style: italic;
+        }
+        .logo-text span { color: var(--neon-teal); }
+        .logo-subtitle {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .progress-tracker {
+            pointer-events: auto;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .progress-tracker p {
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-teal);
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+        }
+        .dot {
+            width: 32px; height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            transition: all 0.5s ease;
+        }
+        .dot.completed {
+            background: var(--neon-teal);
+            box-shadow: 0 0 10px var(--neon-teal);
         }
 
         /* 3D Canvas Container */
         #canvas-container {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
         }
 
         /* === Glassmorphism UI Panels === */
-        .ui-layer {
-            position: relative;
-            z-index: 10;
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-left: 1px solid var(--glass-border);
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            right: 0; top: 0;
+            height: 100%; width: 450px;
+            z-index: 20;
             display: flex;
-            width: 100%;
-            padding: 2rem 3rem;
-            pointer-events: none; /* Lets clicks pass through to the 3D globe */
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .glass-panel {
-            pointer-events: auto; /* Re-enables clicks for the panel */
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+        .glass-panel.active {
+            transform: translateX(0);
+        }
+
+        .panel-header {
+            position: relative;
+            height: 200px;
+            background: #000;
+            display: flex; align-items: center; justify-content: center;
+            border-bottom: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        .pip-interpreter {
+            position: absolute;
+            bottom: 16px; right: 16px;
+            width: 100px; height: 140px;
+            background: #0f172a;
+            border: 2px solid var(--neon-teal-dim);
+            border-radius: 8px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        }
+        .pip-badge {
+            position: absolute; top: 8px; left: 8px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 6px; border-radius: 12px;
+            font-size: 8px; font-weight: bold;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .pip-badge::before {
+            content: ''; display: block;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent-red);
+        }
+
+        .panel-content {
             padding: 2rem;
-            max-width: 450px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .btn-close {
+            background: transparent; border: none;
+            color: var(--text-muted); cursor: pointer;
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
+            font-weight: 800; display: flex; align-items: center; gap: 8px;
+            margin-bottom: 2rem;
+        }
+        .btn-close:hover { color: var(--neon-teal); }
+
+        .era-badge {
+            display: inline-block;
+            background: var(--neon-teal-dim);
+            color: var(--neon-teal);
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+            border: 1px solid var(--neon-teal);
+            margin-bottom: 1rem;
+        }
+
+        .module-title { font-size: 2.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 1rem; }
+        .module-desc { font-size: 1.1rem; color: #cbd5e1; font-style: italic; border-left: 4px solid var(--neon-teal); padding-left: 1rem; margin-bottom: 1.5rem; }
+        .module-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; }
+
+        .btn-primary {
+            width: 100%; padding: 1.2rem;
+            background: linear-gradient(90deg, #0284c7, #0891b2);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 0 20px rgba(8, 145, 178, 0.4);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 25px rgba(8, 145, 178, 0.6); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            background: var(--space-light);
+            border: 1px solid var(--neon-teal-dim);
+            padding: 3rem; border-radius: 24px;
+            max-width: 700px; width: 90%;
+            position: relative; overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.1);
+        }
+        .modal-content::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--neon-teal), transparent);
+        }
+
+        .scenario-text { font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.5; font-style: italic; }
+        
+        .quiz-options { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+        .quiz-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: var(--text-main); padding: 1rem; border-radius: 12px;
+            text-align: left; cursor: pointer; transition: all 0.2s;
+            font-size: 0.95rem; line-height: 1.4;
+        }
+        .quiz-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+        
+        .quiz-btn.selected { background: var(--neon-teal-dim); border-color: var(--neon-teal); }
+        .quiz-btn.correct { background: rgba(34, 197, 94, 0.2); border-color: var(--accent-green); }
+        .quiz-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--accent-red); opacity: 0.6; }
+
+        .feedback-box {
+            padding: 1rem; border-radius: 12px; margin-bottom: 2rem; display: none;
+        }
+        .feedback-box.active { display: block; }
+        .feedback-box.success { background: rgba(34, 197, 94, 0.1); border: 1px solid var(--accent-green); }
+        .feedback-box.error { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); }
+
+        .controls-footer {
+            position: absolute; bottom: 2rem; left: 3rem;
+            z-index: 10; pointer-events: auto;
+        }
+        .btn-a11y {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--text-main); padding: 1rem; border-radius: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px); transition: all 0.2s;
+        }
+        .btn-a11y:hover { background: rgba(255,255,255,0.1); border-color: var(--neon-teal); color: var(--neon-teal); }
+
+        #a11y-menu {
+            position: absolute; bottom: 80px; left: 0;
+            background: var(--space-light); border: 1px solid var(--glass-border);
+            padding: 1.5rem; border-radius: 16px; width: 250px;
+            display: none; flex-direction: column; gap: 1rem;
+        }
+        #a11y-menu.active { display: flex; }
+        .a11y-toggle { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">SE</div>
+            <div class="logo-text">
+                <h1>Silent <span>Echoes</span></h1>
+                <p class="logo-subtitle">Global Deaf Education Archive</p>
+            </div>
+        </div>
+
+        <div class="progress-tracker">
+            <p>Candidate Progress</p>
+            <div class="progress-dots" id="progress-container">
+                <div class="dot" id="dot-pioneers"></div>
+                <div class="dot" id="dot-americas"></div>
+                <div class="dot" id="dot-dark-age"></div>
+                <div class="dot" id="dot-modern"></div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- 3D Canvas -->
+        <div id="canvas-container"></div>
+
+        <!-- Right Side Information Panel -->
+        <aside class="glass-panel" id="info-panel" aria-hidden="true">
+            <div class="panel-header">
+                <div style="color: rgba(255,255,255,0.2); font-size: 3rem;">▶</div>
+                <!-- Simulated ASL Interpreter -->
+                <div class="pip-interpreter" id="interpreter-box">
+                    <div class="pip-badge">LIVE</div>
+                    <div style="font-size: 2rem; color: var(--neon-teal-dim);">✋</div>
+                    <div style="font-size: 0.5rem; color: var(--neon-teal); margin-top: 8px; font-weight: bold;">ASL STREAM</div>
+                </div>
+            </div>
+            
+            <div class="panel-content">
+                <button class="btn-close" onclick="closePanel()">
+                    <span>&larr;</span> Close Archive
+                </button>
+                <div class="era-badge" id="mod-era">1500s</div>
+                <h2 class="module-title" id="mod-title">Title</h2>
+                <p class="module-desc" id="mod-desc">Description</p>
+                <p class="module-text" id="mod-content">Content goes here...</p>
+                
+                <button class="btn-primary" onclick="openQuiz()">Start Knowledge Check</button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Quiz Modal -->
+    <div class="modal-overlay" id="quiz-modal">
+        <div class="modal-content">
+            <h3 class="space-font" style="color: var(--neon-teal); margin-bottom: 1.5rem; font-size: 1.5rem; text-transform: uppercase;">Scenario Assessment</h3>
+            <p class="scenario-text" id="quiz-scenario">Scenario text goes here.</p>
+            
+            <div class="quiz-options" id="quiz-options">
+                <!-- Options injected via JS -->
+            </div>
+
+            <div class="feedback-box" id="quiz-feedback">
+                <h4 style="margin-bottom: 0.5rem;" id="feedback-title">Title</h4>
+                <p style="font-size: 0.9rem;" id="feedback-text">Feedback text</p>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; margin-top: 1rem;">
+                <button class="btn-primary" style="width: auto; padding: 1rem 2rem;" id="btn-submit-quiz" onclick="submitQuiz()">Submit Analysis</button>
+                <button class="btn-primary" style="width: auto; padding: 1rem 2rem; display: none; background: #fff; color: #000;" id="btn-next" onclick="closeQuiz()">Module Cleared &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accessibility Controls -->
+    <div class="controls-footer">
+        <button class="btn-a11y" onclick="toggleA11yMenu()" aria-label="Accessibility Settings">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 9.05v-.1"></path><path d="M16 9.05v-.1"></path><path d="M12 14c-1.5 0-2.8-.8-3.5-2"></path><path d="M15.5 12c-.7 1.2-2 2-3.5 2"></path></svg>
+        </button>
+        <div id="a11y-menu">
+            <h4 style="margin-bottom: 10px; color: var(--neon-teal);">Access Controls</h4>
+            <label class="a11y-toggle">
+                High Contrast
+                <input type="checkbox" id="toggle-contrast" onchange="toggleContrast()">
+            </label>
+            <label class="a11y-toggle">
+                Reduce Motion
+                <input type="checkbox" id="toggle-motion" onchange="toggleMotion()">
+            </label>
+            <label class="a11y-toggle">
+                Hide ASL Stream
+                <input type="checkbox" id="toggle-asl" onchange="toggleASL()">
+            </label>
+        </div>
+    </div>
+
+    <script>
+        // === Curriculum Data ===
+        const MODULES = [
+            {
+                id: 'pioneers',
+                title: 'The Early Pioneers',
+                era: '1500s–1700s',
+                pos: { lat: 40, lon: -10 }, // Spain/France relative
+                description: 'The foundation of formal education for the Deaf.',
+                content: 'Before the 1500s, deaf individuals were often denied legal rights. Pedro Ponce de León in Spain began the first documented systematic education. Later, Abbé Charles-Michel de l\'Épée in France established the first free public school, validating natural sign language as a language of instruction.',
+                quiz: {
+                    scenario: "You are Abbé de l'Épée in 1760s Paris. You observe two deaf sisters communicating on the street. How do you structure your new school's curriculum?",
+                    options: [
+                        "Force them to learn spoken French through intense speech therapy.",
+                        "Use their natural sign language as the foundation for teaching written French.",
+                        "Isolate them to prevent the use of gestures."
+                    ],
+                    correct: 1,
+                    feedback: "Correct! De l'Épée recognized that natural sign language was a valid, complete language and used it to bridge the gap to written French, revolutionizing Deaf education."
+                }
+            },
+            {
+                id: 'americas',
+                title: 'Transatlantic Shift',
+                era: '1800s',
+                pos: { lat: 41, lon: -72 }, // Hartford, CT relative
+                description: 'The founding of the American School for the Deaf.',
+                content: 'In 1817, Thomas Hopkins Gallaudet and Laurent Clerc combined French Sign Language with local American signs to create ASL. This period marked the professionalization of deaf education in the Western hemisphere.',
+                quiz: {
+                    scenario: "You are Thomas Gallaudet. You've traveled to Europe seeking teaching methods. Why do you choose to partner with Laurent Clerc in France rather than educators in England?",
+                    options: [
+                        "Clerc offered a manual (sign-based) approach, while the English insisted on a secretive oral method.",
+                        "France offered better funding for American schools.",
+                        "Clerc was the only teacher willing to cross the Atlantic."
+                    ],
+                    correct: 0,
+                    feedback: "Exactly. The Braidwood family in England guarded their oral methods as a commercial secret. Clerc and the French school openly shared their sign-based pedagogical methods."
+                }
+            },
+            {
+                id: 'dark-age',
+                title: 'The Milan Conference',
+                era: '1880',
+                pos: { lat: 45, lon: 9 }, // Milan relative
+                description: 'The devastating global impact of oralism.',
+                content: 'The 1880 Milan Conference declared oral education superior to manual sign. This led to a century-long ban on sign language in classrooms, removing deaf teachers and suppressing Deaf culture globally.',
+                quiz: {
+                    scenario: "Following the 1880 Milan Conference, you are a Deaf teacher in a mainstream school. What immediate impact does the conference ruling have on your career?",
+                    options: [
+                        "You are promoted to teach oral methods.",
+                        "You are likely fired or demoted, as schools ban sign language and require hearing teachers to enforce speech.",
+                        "Nothing changes; the conference was merely a suggestion."
+                    ],
+                    correct: 1,
+                    feedback: "Spot on. The Milan resolution led to the mass dismissal of Deaf educators worldwide, as oralism required hearing teachers to instruct deaf students in speech and lip-reading."
+                }
+            },
+            {
+                id: 'modern',
+                title: 'Modern Resilience',
+                era: '1988–Present',
+                pos: { lat: 38, lon: -77 }, // DC relative
+                description: 'Civil rights and the Deaf President Now movement.',
+                content: 'The "Deaf President Now" movement at Gallaudet University sparked a global shift toward linguistic human rights. Modern education now embraces neurodiversity, AI translation, and bicultural-bilingual approaches.',
+                quiz: {
+                    scenario: "It is 1988 at Gallaudet University. The Board has just selected a hearing president over highly qualified Deaf candidates. As a student leader, what is your pedagogical argument for a Deaf president?",
+                    options: [
+                        "Deaf students need a role model who shares their linguistic and cultural identity.",
+                        "A hearing president will bring in more federal funding.",
+                        "Deaf students cannot learn from hearing individuals."
+                    ],
+                    correct: 0,
+                    feedback: "Perfect. The DPN movement was rooted in the pedagogical and psychological need for Deaf leadership, proving that 'Deaf people can do anything hearing people can do, except hear.'"
+                }
+            }
+        ];
+
+        // === Application State ===
+        let activeModule = null;
+        let selectedOptionIndex = null;
+        let completedModules = [];
+        let reduceMotion = false;
+
+        // === Three.js Setup ===
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enablePan = false;
+        controls.minDistance = 5;
+        controls.maxDistance = 15;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0x00f2ff, 2);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        // Starfield
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 1500;
+        const starPos = new Float32Array(starCount * 3);
+        for(let i=0; i < starCount * 3; i++) {
+            starPos[i] = (Math.random() - 0.5) * 60;
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.08, transparent: true, opacity: 0.4 });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+
+        // Holographic Globe Group
+        const globeGroup = new THREE.Group();
+        scene.add(globeGroup);
+
+        // Globe Inner Core
+        const coreGeo = new THREE.SphereGeometry(2.95, 64, 64);
+        const coreMat = new THREE.MeshStandardMaterial({ color: 0x020617, roughness: 0.8 });
+        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        globeGroup.add(coreMesh);
+
+        // Globe Wireframe Texture
+        const canvas = document.createElement('canvas');
+        canvas.width = 1024; canvas.height = 1024;
+        const ctx = canvas.getContext('2d');
+        ctx.strokeStyle = 'rgba(0, 242, 255, 0.4)';
+        ctx.lineWidth = 2;
+        for (let i = 0; i <= 1024; i += 64) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 1024); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(1024, i); ctx.stroke();
+        }
+        const gridTexture = new THREE.CanvasTexture(canvas);
+        gridTexture.wrapS = THREE.RepeatWrapping; gridTexture.wrapT = THREE.RepeatWrapping;
+
+        const shellGeo = new THREE.SphereGeometry(3, 64, 64);
+        const shellMat = new THREE.MeshStandardMaterial({ 
+            map: gridTexture, color: 0x00f2ff, transparent: true, opacity: 0.2,
+            blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+        });
+        const shellMesh = new THREE.Mesh(shellGeo, shellMat);
+        globeGroup.add(shellMesh);
+
+        // Lat/Lon to Vector3 Helper
+        function getPositionFromLatLon(lat, lon, radius) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            return new THREE.Vector3(
+                -(radius * Math.sin(phi) * Math.cos(theta)),
+                radius * Math.cos(phi),
+                radius * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        // Add Module Nodes
+        const nodes = [];
+        const nodeMatDefault = new THREE.MeshStandardMaterial({ color: 0x00f2ff, emissive: 0x00f2ff, emissiveIntensity: 1 });
+        const nodeMatActive = new THREE.MeshStandardMaterial({ color: 0xffae00, emissive: 0xffae00, emissiveIntensity: 2 });
+        const nodeMatCompleted = new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x22c55e, emissiveIntensity: 1 });
+
+        MODULES.forEach((mod) => {
+            const pos = getPositionFromLatLon(mod.pos.lat, mod.pos.lon, 3.05);
+            const nodeGeo = new THREE.SphereGeometry(0.15, 32, 32);
+            const nodeMesh = new THREE.Mesh(nodeGeo, nodeMatDefault);
+            nodeMesh.position.copy(pos);
+            nodeMesh.userData = { id: mod.id, module: mod };
+            globeGroup.add(nodeMesh);
+            nodes.push(nodeMesh);
+        });
+
+        // Raycaster for interactions
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        window.addEventListener('click', (e) => {
+            if(document.getElementById('info-panel').classList.contains('active') && e.clientX > window.innerWidth - 450) return;
+
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            
+            const intersects = raycaster.intersectObjects(nodes);
+            if (intersects.length > 0) {
+                const clickedNode = intersects[0].object;
+                openPanel(clickedNode.userData.module);
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodes);
+            document.body.style.cursor = intersects.length > 0 ? 'pointer' : 'default';
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            if(!reduceMotion && !activeModule) {
+                globeGroup.rotation.y += 0.002;
+            }
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // === UI Logic ===
+
+        function updateNodeColors() {
+            nodes.forEach(node => {
+                if (activeModule && node.userData.id === activeModule.id) {
+                    node.material = nodeMatActive;
+                } else if (completedModules.includes(node.userData.id)) {
+                    node.material = nodeMatCompleted;
+                } else {
+                    node.material = nodeMatDefault;
+                }
+            });
+        }
+
+        function openPanel(module) {
+            activeModule = module;
+            updateNodeColors();
+            
+            document.getElementById('mod-era').innerText = module.era;
+            document.getElementById('mod-title').innerText = module.title;
+            document.getElementById('mod-desc').innerText = module.description;
+            document.getElementById('mod-content').innerText = module.content;
+            
+            document.getElementById('info-panel').classList.add('active');
+            document.getElementById('info-panel').setAttribute('aria-hidden', 'false');
+        }
+
+        function closePanel() {
+            activeModule = null;
+            updateNodeColors();
+            document.getElementById('info-panel').classList.remove('active');
+            document.getElementById('info-panel').setAttribute('aria-hidden', 'true');
+        }
+
+        function openQuiz() {
+            if(!activeModule) return;
+            selectedOptionIndex = null;
+            
+            document.getElementById('quiz-scenario').innerText = activeModule.quiz.scenario;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            activeModule.quiz.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-btn';
+                btn.innerHTML = `<span style="color: var(--neon-teal); font-weight: bold; margin-right: 10px;">${String.fromCharCode(65+idx)}.</span> ${opt}`;
+                btn.onclick = () => selectOption(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').classList.remove('active');
+            document.getElementById('btn-submit-quiz').style.display = 'block';
+            document.getElementById('btn-submit-quiz').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+
+            document.getElementById('quiz-modal').classList.add('active');
+        }
+
+        function selectOption(idx, btnElement) {
+            selectedOptionIndex = idx;
+            document.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            document.getElementById('btn-submit-quiz').disabled = false;
+        }
+
+        function submitQuiz() {
+            if(selectedOptionIndex === null) return;
+
+            const isCorrect = selectedOptionIndex === activeModule.quiz.correct;
+            const buttons = document.querySelectorAll('.quiz-btn');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if(idx === activeModule.quiz.correct) {
+                    btn.classList.add('correct');
+                } else if(idx === selectedOptionIndex && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.className = `feedback-box active ${isCorrect ? 'success' : 'error'}`;
+            document.getElementById('feedback-title').innerText = isCorrect ? 'Correct Analysis' : 'Historical Correction';
+            document.getElementById('feedback-title').style.color = isCorrect ? 'var(--accent-green)' : 'var(--accent-red)';
+            document.getElementById('feedback-text').innerText = activeModule.quiz.feedback;
+
+            document.getElementById('btn-submit-quiz').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'block';
+            
+            if(isCorrect) {
+                document.getElementById('btn-next').innerText = "Module Cleared \u2192";
+                if(!completedModules.includes(activeModule.id)) {
+                    completedModules.push(activeModule.id);
+                    document.getElementById(`dot-${activeModule.id}`).classList.add('completed');
+                    updateNodeColors();
+                }
+            } else {
+                document.getElementById('btn-next').innerText = "Return to Archive \u2192";
+            }
+        }
+
+        function closeQuiz() {
+            document.getElementById('quiz-modal').classList.remove('active');
+        }
+
+        // === Accessibility Toggles ===
+        function toggleA11yMenu() {
+            const menu = document.getElementById('a11y-menu');
+            menu.classList.toggle('active');
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function toggleMotion() {
+            reduceMotion = document.getElementById('toggle-motion').checked;
+        }
+
+        function toggleASL() {
+            const interpreter = document.getElementById('interpreter-box');
+            interpreter.style.display = document.getElementById('toggle-asl').checked ? 'none' : 'flex';
+        }
+
+    </script>
+</body>
+</html>
